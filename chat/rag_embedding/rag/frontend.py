@@ -6,17 +6,7 @@ from backend import stream_rag_chain
 
 st.set_page_config(page_title="Bank Chatbot with RAG", layout="centered")
 
-st.title("🏦 Bank Chatbot")
-
-# --- Sidebar for Inputs ---
-with st.sidebar:
-    st.header("Configuration")
-    model = st.selectbox("Select model:", ["Gemini", "Open AI"])
-    language = st.selectbox("Select language:", ["English", "Hebrew"])
-
-    if st.button("Clear Chat History"):
-        st.session_state.messages = []
-        st.rerun()
+st.title("Angular Helper")
 
 # --- Chat Interface ---
 
@@ -46,3 +36,4 @@ if prompt := st.chat_input("What is your question?"):
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
+
