@@ -11,6 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 # Load environment variables from .env file
 load_dotenv()
+import os
 
 loader = WebBaseLoader([
     "https://angular.dev/guide/signals",
@@ -38,7 +39,10 @@ retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k
 # Let’s put it all together into a chain that takes a question,
 # retrieves relevant documents, constructs a prompt,
 # passes it into a model, and parses the output.
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.0-flash",
+    google_api_key=os.getenv("GOOGLE_API_KEY")
+)
 
 prompt = ChatPromptTemplate.from_template("""
 You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
@@ -72,4 +76,5 @@ def get_implementation_guidance(topic):
     """Get implementation guidance for completing Angular features"""
     guidance_prompt = f"איך לסיים ליישם {topic} ב-Angular? תן הנחיות מעשיות צעד אחר צעד."
     return rag_chain.invoke(guidance_prompt)
+
 
