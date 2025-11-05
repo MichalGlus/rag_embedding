@@ -1,39 +1,40 @@
 import streamlit as st
-from backend import stream_rag_chain
+from backend import stream_rag_chain  # מייבא את ה-RAG מהקובץ שלך
 
 
 # --- Streamlit App ---
 
-st.set_page_config(page_title="Bank Chatbot with RAG", layout="centered")
+st.set_page_config(page_title="Angular Assistant", layout="centered")
 
-st.title("Angular Helper")
+st.title("🅰️ Angular Helper Bot")
+
+st.markdown("שאל כל שאלה על Angular — Signals, DI, Routing ועוד.")
 
 # --- Chat Interface ---
 
-# Initialize chat history in session state if it doesn't exist
+# Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display past messages from the chat history
+# Display chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Get user input from the chat input box
-if prompt := st.chat_input("What is your question?"):
+# --- User Input ---
+if prompt := st.chat_input("מה תרצה לשאול על Angular?"):
+    # Display user message
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Get assistant response and display it
-    with st.chat_message("assistant"):
-
-        # stream
-        response = st.write_stream(stream_rag_chain(prompt))
-
-
-    # Add user message to chat history and display it
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    # Display assistant message (streaming)
+    with st.chat_message("assistant"):
+        response_stream = stream_rag_chain(prompt)
 
+        # הצגה הדרגתית של הטקסט
+        response_text = st.write_stream(response_stream)
+
+    # Save assistant response
+    st.session_state.messages.append({"role": "assistant", "content": response_text})
